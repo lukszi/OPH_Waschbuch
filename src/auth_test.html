@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>auth_test</title>
+    <script src="../node_modules/keycloak-js/dist/keycloak.min.js"></script>
+    <script>
+        const kcConf = {
+            "clientId": "Waschmarken",
+            "realm": "oph",
+            "auth-server-url": "http://localhost:8080/",
+            "ssl-required": "external",
+            "resource": "Waschmarken",
+            "public-client": true,
+            "confidential-port": 0,
+            onLoad: 'login-required',
+            "messageReceiveTimeout": 1000,
+        };
+        const oldKcConf = {
+            "realm": "oph",
+            "auth-server-url": "http://localhost:8080/",
+            "clientId": "Waschmarken",
+            "checkLoginIframe": false,
+        };
+
+        function initKeycloak() {
+            const keycloak = new Keycloak(kcConf);
+            keycloak.init().then(function (authenticated) {
+                alert(authenticated ? 'authenticated' : 'not authenticated');
+            }).catch(reason => {
+                console.log(reason);
+            });
+        }
+    </script>
+</head>
+<body onload="initKeycloak()">
+
+</body>
+</html>

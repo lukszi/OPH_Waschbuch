@@ -1,2 +1,18 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    import DayView from "../lib/components/DayView.svelte";
+    import DateNavigator from "../lib/components/DateNavigator.svelte";
+</script>
+
+<div id="dateNav">
+    <DateNavigator/>
+</div>
+<div>
+    <DayView/>
+</div>
+
+<style>
+    #dateNav {
+        display: flex;
+        justify-content: center;
+    }
+</style>
