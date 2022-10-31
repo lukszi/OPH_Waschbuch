@@ -3,6 +3,9 @@
     import DateNavigator from "../lib/components/DateNavigator.svelte";
     import Keycloak from "keycloak-js";
     import { onMount } from "svelte";
+    import {Authentication} from "../lib/model/Authentication";
+    import {appointmentsStore, authStore, selectedDate} from "../lib/stores";
+    import {getAppointments} from "../lib/api";
 
     const kcConf = {
         clientId: "Waschmarken",
@@ -15,12 +18,14 @@
         onLoad: "login-required",
         messageReceiveTimeout: 1000,
     };
-    const oldKcConf = {
-        realm: "oph",
-        "auth-server-url": "http://localhost:8080/",
-        clientId: "Waschmarken",
-        checkLoginIframe: false,
-    };
+
+    function initApplication(){
+        selectedDate.subscribe((date) => {
+            // Clean appointmentsStore to evoke loading animation
+            // appointmentsStore.set([]);
+            getAppointments(date, $authStore).then(appointmentsStore.set).catch(console.error);
+        });
+    }
 
     function initKeycloak() {
         const keycloak = new Keycloak(kcConf);
@@ -30,7 +35,14 @@
                 checkLoginIframe: false,
             })
             .then(function (authenticated) {
-                alert(authenticated ? "authenticated" : "not authenticated");
+                if (authenticated){
+                    const auth = new Authentication(keycloak.token);
+                    authStore.set(auth);
+                    initApplication();
+                }
+                else {
+                    // TODO: Handle unauthenticated error
+                }
             })
             .catch((reason) => {
                 console.log(reason);

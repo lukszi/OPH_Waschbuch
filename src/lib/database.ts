@@ -38,6 +38,12 @@ export async function insert(appointment: Appointment){
     // TODO Error handling and return
 }
 
+export async function findByDateSlotAndMachine(date: Date, timeSlot: number, machine: string): Promise<IAppointment | null>{
+    console.log("findByDateSlotAndMachine", date, timeSlot, machine);
+    await connect('mongodb://localhost:27017/washing_book');
+    return AppointmentModel.findOne({date: date, timeSlot: timeSlot, machine: machine});
+}
+
 export async function deleteAppointment(appointment: Appointment){
     if (appointment.user === null){
         throw error(400, "User cannot be null");

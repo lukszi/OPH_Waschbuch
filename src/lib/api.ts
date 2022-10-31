@@ -2,34 +2,37 @@ import {Appointment} from "./model/Appointment";
 import User from "./model/User";
 import TimeSlot from "./model/TimeSlot";
 import Machine from "./model/Machine";
+import type {Authentication} from "./model/Authentication";
 
-export async function getAppointments(date: Date): Promise<Appointment[]> {
-    const appointments: Appointment[] = [];
-    const rawAppointments = await (await fetch(`http://localhost:5173/api/appointments?date=${date.toISOString()}`)).json();
-    let rawAppointment: object;
-    for(rawAppointment of rawAppointments) {
-        const appointment = createAppointmentFromRawAppointment(rawAppointment);
-        appointments.push(appointment);
-    }
-    return appointments
+export async function getAppointments(date: Date, authentication: Authentication): Promise<Appointment[]> {
+    const rawAppointments: Record<string, unknown>[] = await (await
+        fetch(`http://localhost:5173/api/appointments?date=${date.toISOString()}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${authentication.token}`
+            }
+        })).json();
+    return rawAppointments.map(rawApt => createAppointmentFromRawAppointment(rawApt))
 }
 
-export async function createAppointment(appointment: Appointment): Promise<Appointment>{
+export async function createAppointment(appointment: Appointment, authentication: Authentication): Promise<Appointment> {
     const response: Response = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authentication.token}`
         },
         body: JSON.stringify(appointment)
     })
     return createAppointmentFromRawAppointment(await response.json());
 }
 
-export async function deleteAppointment(appointment: Appointment): Promise<boolean> {
+export async function deleteAppointment(appointment: Appointment, authentication: Authentication): Promise<boolean> {
     const response = await fetch('/api/appointments', {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authentication.token}`
         },
         body: JSON.stringify(appointment)
     });
@@ -37,10 +40,10 @@ export async function deleteAppointment(appointment: Appointment): Promise<boole
     return response.ok;
 }
 
-function createAppointmentFromRawAppointment(rawAppointment: any) {
+function createAppointmentFromRawAppointment(rawAppointment: Record<string, unknown>): Appointment {
     return new Appointment(
-        rawAppointment.date,
-        new TimeSlot(rawAppointment.timeSlot),
-        new Machine(rawAppointment.machine),
-        new User(rawAppointment.user.name, rawAppointment.user.room));
+        <Date>rawAppointment.date,
+        new TimeSlot(<number>rawAppointment.timeSlot),
+        new Machine(<string>rawAppointment.machine),
+        new User((<User>rawAppointment.user).name, (<User>rawAppointment.user).room));
 }
