@@ -4,19 +4,19 @@
     import addHours from "date-fns/addHours";
     import parse from "date-fns/parse";
     import {derived, type Readable} from "svelte/store";
-    import {Appointment} from "../model/Appointment";
+    import type {Appointment} from "../model/Appointment";
     import {onMount} from "svelte";
-    import User from "../model/User";
+    import type User from "../model/User";
     import {userStore} from "../stores";
     import {createAppointment, deleteAppointment} from "../api";
-    import Machine from "../model/Machine";
-    import TimeSlot from "../model/TimeSlot";
+    import type Machine from "../model/Machine";
+    import type TimeSlot from "../model/TimeSlot";
     import {appointmentsStore, getAppointment} from "../stores";
 
     let appointment: Readable<Appointment>;
     export let machine: Machine;
     export let timeSlot: TimeSlot;
-    let blockedBy: Readable<User>;
+    let blockedBy: Readable<User | null>;
 
     onMount(() => appointment = getAppointment(machine, timeSlot))
 

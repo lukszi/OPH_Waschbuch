@@ -5,7 +5,7 @@ import {deleteAppointment, findByDate, type IAppointment, insert} from "../../..
 import TimeSlot from "../../../lib/model/TimeSlot";
 
 export async function GET(event: RequestEvent) {
-    const dateParam = event.url.searchParams.get('date');
+    const dateParam: string | null = event.url.searchParams.get('date');
     if(dateParam == null){
         throw error(400, 'Missing date parameter');
     }
