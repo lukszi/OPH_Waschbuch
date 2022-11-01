@@ -8,6 +8,7 @@
     - Logout button
     - Lock page load behind logged in state
     - Cryptographic JWT validation in Backend
+    - Limit users to 2 Appointments a day
 
 ## Deployment
     - Dockerize deployment
