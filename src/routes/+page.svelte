@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "../app.css";
     import DayView from "../lib/components/DayView.svelte";
     import DateNavigator from "../lib/components/DateNavigator.svelte";
     import { onMount } from "svelte";
