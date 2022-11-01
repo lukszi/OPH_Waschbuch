@@ -1,15 +1,24 @@
-# Big changes
+# Todos
+
+## Big changes
     - Style with daisyUI
     - Proper Error Handling
 
-# Minor changes
+## Minor changes
     - Logout button
     - Lock page load behind logged in state
+    - Cryptographic JWT validation in Backend
 
-# Deployment
+## Deployment
     - Dockerize deployment
     - Instructions for Keycloak setup
+    - Https certificates
+        - Keycloak
+        - This project
+    - JWT certificates
 
-# Wishlist
+## Wishlist
     - Comments
     - Admin role
+    - Appointment override if user is too late
+    - Persist selected date in URI
