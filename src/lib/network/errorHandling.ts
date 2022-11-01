@@ -23,7 +23,7 @@ export async function fetchAndHandleError(input: string, init: RequestInit | und
     }
 
     if (!response.ok) {
-        handleFailedRequest(response);
+        await handleFailedRequest(response);
     }
     return response;
 }
@@ -39,21 +39,22 @@ export async function fetchAndHandleError(input: string, init: RequestInit | und
  *
  * @param response
  */
-export function handleFailedRequest(response: Response) {
+export async function handleFailedRequest(response: Response) {
+    const errorText: string = await response.text();
     if (response.status === 401) {
-        throw new AuthenticationError(response.statusText);
+        throw new AuthenticationError(errorText);
     }
     if (response.status === 400) {
-        throw new RequestError(response.statusText, response.status);
+        throw new RequestError(errorText, response.status);
     }
     if (response.status === 403) {
-        throw new AuthorizationError(response.statusText);
+        throw new AuthorizationError(errorText);
     }
     if (response.status === 409) {
-        throw new RequestError(response.statusText, response.status);
+        throw new RequestError(errorText, response.status);
     }
     if (response.status >= 500 && response.status < 600) {
-        throw new ServerError(response.statusText, response.status);
+        throw new ServerError(errorText, response.status);
     }
-    throw new Error("Unknown network request error: " + response.statusText);
+    throw new Error("Unknown network request error: " + errorText);
 }
