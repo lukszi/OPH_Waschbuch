@@ -4,7 +4,7 @@
     import {onMount} from "svelte";
     import type User from "../model/User";
     import {selectedDate, userStore} from "../stores";
-    import {createAppointment, deleteAppointment, getAppointments} from "../api";
+    import {createAppointment, deleteAppointment, getAppointments} from "../network/api";
     import type Machine from "../model/Machine";
     import type TimeSlot from "../model/TimeSlot";
     import {appointmentsStore, getAppointment} from "../stores";

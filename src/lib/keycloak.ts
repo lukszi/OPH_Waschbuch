@@ -1,5 +1,5 @@
 import {appointmentsStore, authStore, selectedDate} from "./stores";
-import {getAppointments} from "./api";
+import {getAppointments} from "./network/api";
 import Keycloak from "keycloak-js";
 import {Authentication} from "./model/Authentication";
 
