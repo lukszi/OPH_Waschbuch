@@ -20,11 +20,7 @@
             // User does not own appointment
             return;
         }
-        if(!await deleteAppointment($appointment)){
-            // TODO: Handle delete rejection properly
-            // Appointment not deleted
-            return;
-        }
+        await deleteAppointment($appointment);
         appointmentsStore.set(await getAppointments($selectedDate));
     }
 
