@@ -16,7 +16,8 @@ import TimeSlot from "../../../lib/model/TimeSlot";
  *
  * @throws 400 error if the date parameter is missing or invalid
  * @throws 401 error if the token is invalid
- * @return {Appointment[]} All appointments for the given date
+ *
+ * @return {Appointment[]} 200 and all appointments for the given date
  */
 export async function GET(event: RequestEvent): Promise<Response> {
     const authToken: string = getVerifiedToken(event);
@@ -43,7 +44,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
  * @throws 403 error if the user is not allowed to create the passed appointment
  * @throws 409 error if the appointment already exists
  *
- * @return {Appointment} The created appointment
+ * @return {Appointment} 201 and the created appointment
  */
 export async function POST(event: RequestEvent) {
     const authToken: string = getVerifiedToken(event);
@@ -67,7 +68,10 @@ export async function POST(event: RequestEvent) {
  * Endpoint that deletes an appointment
  *
  * @param event needs to contain the appointment that will be deleted
- * @return 200 if the appointment was deleted
+ * @throws 401 error if the token is invalid
+ * @throws 403 error if the user is not allowed to delete the passed appointment
+ *
+ * @return {Appointment} 200 and deleted appointment
  */
 export async function DELETE(event: RequestEvent) {
     const authToken: string = getVerifiedToken(event);
