@@ -18,11 +18,18 @@ const appointmentSchema = new Schema<IAppointment>({
 
 const AppointmentModel = model<IAppointment>('Appointment', appointmentSchema);
 
+/**
+ * Get all appointments for a given date
+ */
 export async function findByDate(date: Date): Promise<IAppointment[]>{
     await connect('mongodb://localhost:27017/washing_book');
     return AppointmentModel.find({date: date});
 }
 
+/**
+ * Create an appointment in the database
+ * @param appointment appointment should contain machine, timeSlot, date and user
+ */
 export async function insert(appointment: Appointment){
     if (appointment.user === null){
         throw error(400, "User cannot be null");
