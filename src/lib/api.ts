@@ -3,8 +3,15 @@ import User from "./model/User";
 import TimeSlot from "./model/TimeSlot";
 import Machine from "./model/Machine";
 import type {Authentication} from "./model/Authentication";
+import { get } from 'svelte/store';
+import { authStore } from './stores';
 
-export async function getAppointments(date: Date, authentication: Authentication): Promise<Appointment[]> {
+export async function getAppointments(date: Date): Promise<Appointment[]> {
+    const authentication: Authentication = get(authStore)
+    if(authentication === null){
+        throw new Error("Authentication store can't contain null.");
+    }
+
     const rawAppointments: Record<string, unknown>[] = await (await
         fetch(`http://localhost:5173/api/appointments?date=${date.toISOString()}`, {
             headers: {
@@ -15,7 +22,17 @@ export async function getAppointments(date: Date, authentication: Authentication
     return rawAppointments.map(rawApt => createAppointmentFromRawAppointment(rawApt))
 }
 
-export async function createAppointment(appointment: Appointment, authentication: Authentication): Promise<Appointment> {
+/**
+ * Create an appointment in the database
+ *
+ * @param appointment appointment should contain machine, timeSlot, date and user
+ */
+export async function createAppointment(appointment: Appointment): Promise<Appointment> {
+    const authentication: Authentication = get(authStore)
+    if(authentication === null){
+        throw new Error("Authentication store can't contain null.");
+    }
+
     const response: Response = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
@@ -24,10 +41,24 @@ export async function createAppointment(appointment: Appointment, authentication
         },
         body: JSON.stringify(appointment)
     })
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
+
     return createAppointmentFromRawAppointment(await response.json());
 }
 
-export async function deleteAppointment(appointment: Appointment, authentication: Authentication): Promise<boolean> {
+/**
+ * Delete an appointment in the database
+ *
+ * @param appointment
+ */
+export async function deleteAppointment(appointment: Appointment): Promise<boolean> {
+    const authentication: Authentication = get(authStore)
+    if(authentication === null){
+        throw new Error("Authentication store can't contain null.");
+    }
+
     const response = await fetch('/api/appointments', {
         method: 'DELETE',
         headers: {
@@ -36,6 +67,9 @@ export async function deleteAppointment(appointment: Appointment, authentication
         },
         body: JSON.stringify(appointment)
     });
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
 
     return response.ok;
 }

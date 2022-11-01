@@ -3,12 +3,11 @@
     import type {Appointment} from "../model/Appointment";
     import {onMount} from "svelte";
     import type User from "../model/User";
-    import {userStore} from "../stores";
-    import {createAppointment, deleteAppointment} from "../api";
+    import {selectedDate, userStore} from "../stores";
+    import {createAppointment, deleteAppointment, getAppointments} from "../api";
     import type Machine from "../model/Machine";
     import type TimeSlot from "../model/TimeSlot";
     import {appointmentsStore, getAppointment} from "../stores";
-    import { authStore } from "../stores";
 
     let appointment: Readable<Appointment>;
     export let machine: Machine;
@@ -16,27 +15,31 @@
     let blockedBy: Readable<User | null>;
 
 
-    function deleteReservation() {
-        // Only attempt deletion of own appointments
-        if ($blockedBy.equals($userStore)) {
-            deleteAppointment($appointment, $authStore)
-                .then(() => {
-                    appointmentsStore.update(appointments => appointments.filter(o => !o.equals($appointment)));
-                    $appointmentsStore = $appointmentsStore
-                });
-        } else {
+    async function deleteReservation() {
+        if (!$blockedBy.equals($userStore)) {
+            // User does not own appointment
             return;
         }
+        if(!await deleteAppointment($appointment)){
+            // TODO: Handle delete rejection properly
+            // Appointment not deleted
+            return;
+        }
+        appointmentsStore.set(await getAppointments($selectedDate));
     }
 
-    function createReservation() {
+    async function createReservation() {
         const a = $appointment;
         a.user = $userStore;
-        // TODO: Handle error
-        createAppointment($appointment, $authStore).then((createdAppointment) => {
-            $appointmentsStore.push(createdAppointment);
-            $appointmentsStore = $appointmentsStore;
-        });
+        try
+        {
+            await createAppointment($appointment);
+        }
+        catch (e) {
+            // TODO: Handle error properly
+            console.log(e);
+        }
+        appointmentsStore.set(await getAppointments($selectedDate));
     }
 
     function timeSlotClicked() {
