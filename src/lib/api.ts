@@ -3,22 +3,25 @@ import User from "./model/User";
 import TimeSlot from "./model/TimeSlot";
 import Machine from "./model/Machine";
 import type {Authentication} from "./model/Authentication";
-import { get } from 'svelte/store';
-import { authStore } from './stores';
+import {get} from 'svelte/store';
+import {authStore} from './stores';
+import {AuthenticationError, AuthorizationError, NetworkError, RequestError, ServerError} from "./errors";
+
 
 export async function getAppointments(date: Date): Promise<Appointment[]> {
-    const authentication: Authentication = get(authStore)
-    if(authentication === null){
-        throw new Error("Authentication store can't contain null.");
+    let response
+    try {
+        response = await fetch(`/api/appointments?date=${date.toISOString()}`,
+            {headers: buildRequestHeader()});
+    } catch (e) {
+        throw e instanceof TypeError ? new NetworkError("Could not connect to server: " + e.message) : e;
     }
 
-    const rawAppointments: Record<string, unknown>[] = await (await
-        fetch(`http://localhost:5173/api/appointments?date=${date.toISOString()}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'authorization': `Bearer ${authentication.token}`
-            }
-        })).json();
+    if (!response.ok) {
+        handleFailedRequest(response);
+    }
+
+    const rawAppointments: Record<string, unknown>[] = await response.json();
     return rawAppointments.map(rawApt => createAppointmentFromRawAppointment(rawApt))
 }
 
@@ -28,21 +31,19 @@ export async function getAppointments(date: Date): Promise<Appointment[]> {
  * @param appointment appointment should contain machine, timeSlot, date and user
  */
 export async function createAppointment(appointment: Appointment): Promise<Appointment> {
-    const authentication: Authentication = get(authStore)
-    if(authentication === null){
-        throw new Error("Authentication store can't contain null.");
+    let response: Response
+    try {
+        response = await fetch('/api/appointments', {
+            method: 'POST',
+            headers: buildRequestHeader(),
+            body: JSON.stringify(appointment)
+        })
+    } catch (e) {
+        throw e instanceof TypeError ? new NetworkError("Could not connect to server: " + e.message) : e;
     }
 
-    const response: Response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authentication.token}`
-        },
-        body: JSON.stringify(appointment)
-    })
-    if(!response.ok){
-        throw new Error(response.statusText);
+    if (!response.ok) {
+        handleFailedRequest(response);
     }
 
     return createAppointmentFromRawAppointment(await response.json());
@@ -53,25 +54,79 @@ export async function createAppointment(appointment: Appointment): Promise<Appoi
  *
  * @param appointment
  */
-export async function deleteAppointment(appointment: Appointment): Promise<boolean> {
+export async function deleteAppointment(appointment: Appointment): Promise<void> {
+    let response: Response
+    try {
+        response = await fetch('/api/appointments', {
+            method: 'DELETE',
+            headers: buildRequestHeader(),
+            body: JSON.stringify(appointment)
+        });
+    } catch (e) {
+        throw e instanceof TypeError ? new NetworkError("Could not connect to server: " + e.message) : e;
+    }
+
+    if (!response.ok) {
+        handleFailedRequest(response);
+    }
+}
+
+
+//
+// Santa's little helpers
+//
+
+/**
+ * Construct and throw corresponding errors for failed requests
+ *
+ * @throws RequestError if response status is 400, 409
+ * @throws AuthorizationError if response status is 401
+ * @throws AuthenticationError if response status is 403
+ * @throws ServerError if response status is 5XX
+ * @param response
+ */
+function handleFailedRequest(response: Response) {
+    if (response.status === 401) {
+        throw new AuthenticationError(response.statusText);
+    }
+    if (response.status === 400) {
+        throw new RequestError(response.statusText, response.status);
+    }
+    if (response.status === 403) {
+        throw new AuthorizationError(response.statusText);
+    }
+    if (response.status === 409) {
+        throw new RequestError(response.statusText, response.status);
+    }
+    if (response.status >= 500 && response.status < 600) {
+        throw new ServerError(response.statusText, response.status);
+    }
+    throw new Error("Unknown network request error: " + response.statusText);
+}
+
+/**
+ * Fetch authentication from store
+ *
+ * @throws AuthenticationError if authentication is not yet set
+ * @return {Authentication} Authentication object from store
+ */
+function getAuth(): Authentication {
     const authentication: Authentication = get(authStore)
-    if(authentication === null){
-        throw new Error("Authentication store can't contain null.");
+    if (authentication === null) {
+        throw new AuthenticationError("User not logged in, authStore is empty.");
     }
+    return authentication;
+}
 
-    const response = await fetch('/api/appointments', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authentication.token}`
-        },
-        body: JSON.stringify(appointment)
-    });
-    if(!response.ok){
-        throw new Error(response.statusText);
+/**
+ * Build request header with authentication token
+ */
+function buildRequestHeader(): { "Content-Type": string, "Authorization": string } {
+    const auth: Authentication = getAuth();
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${auth.token}`
     }
-
-    return response.ok;
 }
 
 function createAppointmentFromRawAppointment(rawAppointment: Record<string, unknown>): Appointment {
