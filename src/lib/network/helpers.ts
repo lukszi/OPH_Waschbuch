@@ -4,7 +4,7 @@
 
 import {AuthenticationError} from "../errors";
 import type {Authentication} from "../model/Authentication";
-import {get} from "svelte/types/runtime/store";
+import {get} from "svelte/store";
 import {authStore} from "../stores";
 import {Appointment} from "../model/Appointment";
 import TimeSlot from "../model/TimeSlot";
