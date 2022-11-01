@@ -83,6 +83,8 @@ export async function deleteAppointment(appointment: Appointment): Promise<void>
  * @throws AuthorizationError if response status is 401
  * @throws AuthenticationError if response status is 403
  * @throws ServerError if response status is 5XX
+ * @throws Error if response status is not expected
+ *
  * @param response
  */
 function handleFailedRequest(response: Response) {
