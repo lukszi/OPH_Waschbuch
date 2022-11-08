@@ -13,52 +13,66 @@
     }
 </script>
 
-<div>
-    <a on:click|preventDefault={updateDate} href id="previous" class="button">&#8249;</a>
-    <p class="date-text">{$formattedDate}</p>
-    <a on:click|preventDefault={updateDate} href id="next" class="button">&#8250;</a>
+<div class="nav-bar-wrapper">
+    <div class="button-wrapper">
+        <a on:click|preventDefault={updateDate} href id="previous" class="button">&#8249;</a>
+    </div>
+    <div class="date-wrapper">
+        <p class="date-text">{$formattedDate}</p>
+    </div>
+    <div class="button-wrapper">
+        <a on:click|preventDefault={updateDate} href id="next" class="button">&#8250;</a>
+    </div>
 </div>
 <DateNavigationListener/>
 
 <style>
-    div {
+    .nav-bar-wrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 50%;
+        height: 8vh;
+    }
+
+    .date-wrapper {
+        display: flex;
+        justify-content: center;
         text-align: center;
-        width: 50vw;
+        align-items: center;
+        width: 100%;
     }
 
     .date-text {
-        margin-top: 0.6vmax;
-        font-size: calc(1vw + 10px);
+        font-size: 2.5vmax;
+        font-weight: 500;
+    }
+
+    .button-wrapper {
         display: inline-block;
+        height: 100%;
+        width: 50px;
+        text-align: center;
     }
 
     .button {
-        text-decoration: none;
-        font-size: 2vw;
         display: inline-block;
-        padding: 0.8vw 2vw;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4vmax;
+        height: 4vmax;
         border-radius: 50%;
+        background-color: #f2f2f2;
+        text-decoration: none;
+        color: #000;
+        font-size: 2.5vmax;
+        font-weight: bold;
     }
 
-    #previous {
-        float: left;
-        background-color: #f1f1f1;
-        color: black;
+    .button:hover {
+        background-color: #e6e6e6;
     }
 
-    #previous:hover {
-        background-color: #46a049;
-        color: white;
-    }
-
-    #next {
-        float: right;
-        background-color: #04AA6D;
-        color: white;
-    }
-
-    #next:hover {
-        background-color: #ddd;
-        color: black;
-    }
 </style>
