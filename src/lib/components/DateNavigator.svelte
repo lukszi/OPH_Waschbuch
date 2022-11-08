@@ -18,13 +18,12 @@
             updateDate({target: {id: 'next'}});
         }
     }
-
 </script>
 
 <div>
-    <a on:click|preventDefault={updateDate} href id="previous" class="round">&#8249;</a>
-    <p>{$formattedDate}</p>
-    <a on:click|preventDefault={updateDate} href id="next" class="round">&#8250;</a>
+    <a on:click|preventDefault={updateDate} href id="previous" class="button">&#8249;</a>
+    <p class="date-text">{$formattedDate}</p>
+    <a on:click|preventDefault={updateDate} href id="next" class="button">&#8250;</a>
 </div>
 
 <svelte:window on:keydown={handleKeyDown}/>
@@ -35,22 +34,18 @@
         width: 50vw;
     }
 
-    p {
+    .date-text {
         margin-top: 0.6vmax;
         font-size: calc(1vw + 10px);
         display: inline-block;
     }
 
-    a {
+    .button {
         text-decoration: none;
         font-size: 2vw;
         display: inline-block;
         padding: 0.8vw 2vw;
-    }
-
-    a:hover {
-        background-color: #ddd;
-        color: black;
+        border-radius: 50%;
     }
 
     #previous {
@@ -59,13 +54,19 @@
         color: black;
     }
 
+    #previous:hover {
+        background-color: #46a049;
+        color: white;
+    }
+
     #next {
         float: right;
         background-color: #04AA6D;
         color: white;
     }
 
-    .round {
-        border-radius: 50%;
+    #next:hover {
+        background-color: #ddd;
+        color: black;
     }
 </style>
