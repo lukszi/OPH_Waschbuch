@@ -23,3 +23,4 @@
     - Admin role
     - Appointment override if user is too late
     - Persist selected date in URI
+    - Mailing

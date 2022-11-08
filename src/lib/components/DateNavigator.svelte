@@ -3,20 +3,13 @@
     import addDays from 'date-fns/addDays';
     import {derived} from "svelte/store";
     import {selectedDate} from "../stores";
+    import DateNavigationListener from "$lib/components/DateNavigationListener.svelte";
 
     $: formattedDate = derived(selectedDate, () => format($selectedDate, 'EEEE dd.MM.yyyy'));
 
     function updateDate(e) {
         let diff = e.target.id === 'next' ? 1 : -1;
         selectedDate.update(date => addDays(date, diff));
-    }
-
-    function handleKeyDown(e) {
-        if (e.key === 'ArrowLeft') {
-            updateDate({target: {id: 'prev'}});
-        } else if (e.key === 'ArrowRight') {
-            updateDate({target: {id: 'next'}});
-        }
     }
 </script>
 
@@ -25,8 +18,7 @@
     <p class="date-text">{$formattedDate}</p>
     <a on:click|preventDefault={updateDate} href id="next" class="button">&#8250;</a>
 </div>
-
-<svelte:window on:keydown={handleKeyDown}/>
+<DateNavigationListener/>
 
 <style>
     div {
