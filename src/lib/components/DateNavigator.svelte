@@ -26,6 +26,7 @@
     }
 
     p {
+        margin-top: 0.6vmax;
         font-size: calc(1vw + 10px);
         display: inline-block;
     }
@@ -34,7 +35,7 @@
         text-decoration: none;
         font-size: 2vw;
         display: inline-block;
-        padding: 1vw 2vw;
+        padding: 0.8vw 2vw;
     }
 
     a:hover {

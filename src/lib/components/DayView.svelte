@@ -17,7 +17,7 @@
     </thead>
     {#each timeSlots as slot}
         <tr>
-            <td>{slot.toString()}</td>
+            <td class="slot_times">{slot.toString()}</td>
             {#each machines as machine}
                 <td>
                     <Timeslot machine={machine} timeSlot={slot}/>
@@ -29,11 +29,17 @@
 
 <style>
     table {
+        margin-left: auto;
+        margin-right: auto;
         border-collapse: collapse;
     }
 
     th, td {
         text-align: center;
         border: 1px solid black;
+    }
+    .slot_times {
+        padding-left: 0.8vw;
+        padding-right: 0.8vw;
     }
 </style>
