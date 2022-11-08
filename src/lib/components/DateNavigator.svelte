@@ -11,6 +11,14 @@
         selectedDate.update(date => addDays(date, diff));
     }
 
+    function handleKeyDown(e) {
+        if (e.key === 'ArrowLeft') {
+            updateDate({target: {id: 'prev'}});
+        } else if (e.key === 'ArrowRight') {
+            updateDate({target: {id: 'next'}});
+        }
+    }
+
 </script>
 
 <div>
@@ -18,6 +26,8 @@
     <p>{$formattedDate}</p>
     <a on:click|preventDefault={updateDate} href id="next" class="round">&#8250;</a>
 </div>
+
+<svelte:window on:keydown={handleKeyDown}/>
 
 <style>
     div {
