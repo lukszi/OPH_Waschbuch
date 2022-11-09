@@ -64,3 +64,17 @@ export async function deleteAppointment(appointment: Appointment){
     };
     return AppointmentModel.deleteOne(filter);
 }
+
+/**
+ * Count all appointments for a given room and date
+ *
+ * @param room room number
+ * @param date date without time
+ *
+ * @return number of appointments for the given room and date
+ */
+export async function countAppointmentsByRoomAndDate(room: string, date: Date): Promise<number>{
+    await connect(dbUri);
+    const filter = {date: new Date(date).setUTCHours(0,0,0,0), "user.room": room};
+    return AppointmentModel.countDocuments(filter);
+}

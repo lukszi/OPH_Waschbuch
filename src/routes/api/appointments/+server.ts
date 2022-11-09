@@ -2,6 +2,7 @@ import {error, type RequestEvent} from '@sveltejs/kit';
 import parseISO from 'date-fns/parseISO'
 import {addHours, isAfter, isBefore, isValid, parse, subHours} from "date-fns";
 import {
+    countAppointmentsByRoomAndDate,
     deleteAppointment,
     findByDate,
     findByDateSlotAndMachine,
@@ -43,7 +44,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
  *
  * @throws 401 error if the token is invalid
  * @throws 403 error if the user is not allowed to create the passed appointment
- * @throws 409 error if the appointment already exists
+ * @throws 409 error if the appointment already exists or the user already has too many appointments that day
  *
  * @return {Appointment} 201 and the created appointment
  */
@@ -60,6 +61,11 @@ export async function POST(event: RequestEvent): Promise<Response> {
     const existingAppointment = await findByDateSlotAndMachine(appointment.date, appointment.timeSlot.id, appointment.machine.name);
     if (existingAppointment) {
         throw error(409, "Appointment already exists");
+    }
+    // Verify user doesn't have too many appointments that day
+    const appointments = await countAppointmentsByRoomAndDate(authenticatedRoom, appointment.date);
+    if (appointments >= 2) {
+        throw error(409, "Too many appointments that day");
     }
     const createdAppointment = await insert(appointment);
     return new Response(JSON.stringify(createdAppointment), {status: 201});
