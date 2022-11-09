@@ -16,7 +16,6 @@
     - Https certificates
         - Keycloak
         - This project
-    - JWT certificates
 
 ## Wishlist
     - Comments

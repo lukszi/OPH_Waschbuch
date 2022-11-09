@@ -1,5 +1,5 @@
 import {connect, model, Schema} from 'mongoose';
-import type {Appointment} from "./model/Appointment";
+import type {Appointment} from "../model/Appointment";
 import {error} from "@sveltejs/kit";
 
 export interface IAppointment {

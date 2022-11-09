@@ -7,8 +7,9 @@ import {
     findByDateSlotAndMachine,
     type IAppointment,
     insert
-} from "../../../lib/database";
+} from "../../../lib/server/database";
 import TimeSlot from "../../../lib/model/TimeSlot";
+import {getAuthenticatedRoom, getVerifiedToken} from "../../../lib/server/auth";
 
 /**
  * Gets all appointments for the given date
@@ -46,7 +47,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
  *
  * @return {Appointment} 201 and the created appointment
  */
-export async function POST(event: RequestEvent) {
+export async function POST(event: RequestEvent): Promise<Response> {
     const authToken: string = getVerifiedToken(event);
     const appointment = await event.request.json();
 
@@ -73,7 +74,7 @@ export async function POST(event: RequestEvent) {
  *
  * @return {Appointment} 200 and deleted appointment
  */
-export async function DELETE(event: RequestEvent) {
+export async function DELETE(event: RequestEvent): Promise<Response> {
     const authToken: string = getVerifiedToken(event);
     const authenticatedRoom: string = getAuthenticatedRoom(authToken);
     const appointment = await event.request.json();
@@ -84,64 +85,6 @@ export async function DELETE(event: RequestEvent) {
     // console.log("deleting appointment", appointment);
     const value = await deleteAppointment(appointment);
     return new Response(JSON.stringify(value), {status: 200});
-}
-
-/**
- * Parses the payload of a JWT token
- *
- * @param auth complete JWT authToken
- */
-function parseTokenPayload(auth: string): Record<string, unknown> {
-    try {
-        const token: string = auth.split(' ')[1];
-        const payload: string = token.split('.')[1];
-        const decodedPayload = Buffer.from(payload, 'base64').toString('utf-8');
-        return JSON.parse(decodedPayload);
-    }
-    catch (e) {
-        throw error(401, 'Invalid authentication token provided');
-    }
-}
-
-/**
- * Get the room number that is authenticated by the given token
- *
- * @param authToken validated authToken
- * @throws 401 error if the room claim is missing
- * @return {string} The room number
- */
-function getAuthenticatedRoom(authToken: string): string {
-    const payload = parseTokenPayload(authToken);
-    try {
-        return <string>payload.room;
-    } catch (e) {
-        throw error(401, 'Token missing room claim');
-    }
-}
-
-/**
- * Checks whether the request has a valid token and returns it, otherwise terminates the request with a 401
- *
- * @throws 401 error if token is missing, invalid, expired or not issued by this server
- * @return {string} A validated token
- */
-function getVerifiedToken(event: RequestEvent): string {
-    const auth: string | null = event.request.headers.get('Authorization');
-
-    if (auth === null) {
-        throw error(401, 'No authentication token provided');
-    }
-
-    // Check if auth is JWT
-    const jwtRegex = /^Bearer [A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/;
-    if (!jwtRegex.test(auth)) {
-        const invalidAuthError = error(401, 'Invalid authentication token provided');
-        invalidAuthError.headers = {'WWW-Authenticate': 'Bearer'};
-        throw invalidAuthError;
-    }
-
-    // TODO: Verify cryptographic signature
-    return auth;
 }
 
 // Remove sensitive data from appointments that are not today
