@@ -39,12 +39,21 @@ export async function insert(appointment: Appointment){
         machine: appointment.machine.name,
         user: {room: appointment.user.room, name: appointment.user.name},
         timeSlot: appointment.timeSlot.id,
-        date: new Date(new Date(appointment.date).setUTCHours(0,0,0,0))
+        date: normalizeDate(appointment.date)
     })
     return dbAppointment.save();
     // TODO Error handling and return
 }
 
+/**
+ * Find a single appointment in the database determined by its date, timeSlot and machine
+ *
+ * @param date
+ * @param timeSlot
+ * @param machine
+ *
+ * @return {IAppointment} the appointment or null if no appointment was found
+ */
 export async function findByDateSlotAndMachine(date: Date, timeSlot: number, machine: string): Promise<IAppointment | null>{
     console.log("findByDateSlotAndMachine", date, timeSlot, machine);
     await connect(dbUri);
@@ -60,7 +69,7 @@ export async function deleteAppointment(appointment: Appointment){
         machine: appointment.machine.name,
         "user.name": appointment.user.name,
         timeSlot: appointment.timeSlot.id,
-        date: new Date(new Date(appointment.date).setUTCHours(0,0,0,0))
+        date: normalizeDate(appointment.date)
     };
     return AppointmentModel.deleteOne(filter);
 }
@@ -75,6 +84,19 @@ export async function deleteAppointment(appointment: Appointment){
  */
 export async function countAppointmentsByRoomAndDate(room: string, date: Date): Promise<number>{
     await connect(dbUri);
-    const filter = {date: new Date(date).setUTCHours(0,0,0,0), "user.room": room};
+    const filter = {date: normalizeDate(date), "user.room": room};
     return AppointmentModel.countDocuments(filter);
+}
+
+/**
+ * Makes a copy of the given date and removes the time
+ *
+ * @param date date to normalize
+ *
+ * @return copy of date without time
+ */
+function normalizeDate(date: Date): Date{
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0,0,0,0);
+    return normalizedDate;
 }
