@@ -1,38 +1,17 @@
-# create-svelte
+# Washingbook
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+This is a digitalized version of the washingbook used in the student dormitories of the RWTH Aachen university. 
+It is a simple web application that allows students to book a washing machine in their dormitory. 
 
-## Creating a project
+The frontend and backend are built in [svelte-kit](https://kit.svelte.dev/) using TypeScript,
+for styling [tailwindcss](https://tailwindcss.com/) has been used
+and authentication is done using a dormitory wide [keycloak](https://www.keycloak.org/) SSO that will not be published.
+All data is stored in a [mongodb](https://www.mongodb.com/) database.
+For deployment a [docker file](https://www.docker.com/) is provided.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Setup
+1. Start docker container with mongodb
+1. Set up your Keycloak instance
+1. Input the client configuration in `./src/lib/keycloak.ts`
+1. Copy the client public key into `./src/lib/server/public.pem`
+1. Run this with npm
