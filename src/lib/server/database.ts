@@ -31,6 +31,7 @@ export async function findByDate(date: Date): Promise<IAppointment[]>{
  * @param appointment appointment should contain machine, timeSlot, date and user
  */
 export async function insert(appointment: Appointment){
+    console.log(appointment);
     if (appointment.user === null){
         throw error(400, "User cannot be null");
     }

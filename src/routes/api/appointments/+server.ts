@@ -1,14 +1,14 @@
 import {error, type RequestEvent} from '@sveltejs/kit';
 import parseISO from 'date-fns/parseISO'
 import {addHours, isAfter, isBefore, isValid, parse, subHours} from "date-fns";
+import type {IAppointment} from "../../../lib/server/database";
 import {
     countAppointmentsByRoomAndDate,
     deleteAppointment,
     findByDate,
     findByDateSlotAndMachine,
-    type IAppointment,
     insert
-} from "../../../lib/server/database";
+} from "../../../lib/server/relationalDatabase";
 import TimeSlot from "../../../lib/model/TimeSlot";
 import {getAuthenticatedRoom, getVerifiedToken} from "../../../lib/server/auth";
 
