@@ -26,7 +26,7 @@ CREATE TABLE Appointment (
     washer_id integer NOT NULL,
     slot_id integer NOT NULL,
     date DATE NOT NULL,
-    deleted BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (washer_id) REFERENCES Washer(id),
     FOREIGN KEY (slot_id) REFERENCES Slots(id)
