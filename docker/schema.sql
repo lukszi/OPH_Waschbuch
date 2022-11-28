@@ -5,16 +5,16 @@ GRANT ALL ON DATABASE washbook TO wbAdmin;
 
 CREATE TABLE Users (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    username varchar(255) NOT NULL,
-    password varchar(255) NOT NULL
+    name varchar(255) NOT NULL,
+    room varchar(255) NOT NULL
 );
 
 CREATE TABLE Washer (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Slots (
+CREATE TABLE Slot (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     start_time time NOT NULL,
     end_time time NOT NULL
@@ -29,7 +29,7 @@ CREATE TABLE Appointment (
     deleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (washer_id) REFERENCES Washer(id),
-    FOREIGN KEY (slot_id) REFERENCES Slots(id)
+    FOREIGN KEY (slot_id) REFERENCES Slot(id)
 );
 
 GRANT ALL ON SCHEMA public TO wbAdmin;
