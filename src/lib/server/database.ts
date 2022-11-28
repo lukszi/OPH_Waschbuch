@@ -23,7 +23,7 @@ const dbUri = 'mongodb://localhost:27017/washing_book';
  */
 export async function findByDate(date: Date): Promise<IAppointment[]>{
     await connect(dbUri);
-    return AppointmentModel.find({date: date});
+    return AppointmentModel.find({date: normalizeDate(date)});
 }
 
 /**
