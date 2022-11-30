@@ -17,8 +17,8 @@ await client.connect()
 export async function findByDate(date: Date): Promise<IAppointment[]> {
     const normalizedDate = normalizeDate(date);
     const result = await client.query('SELECT a.date as date, a.slot_id as timeSlot, u.room as room, u.name as name, w.name as washer ' +
-    'FROM appointment as a left outer join washer w on a.washer_id = w.id left outer join users u on a.user_id = u.id ' +
-    'WHERE a.date = $1 AND a.deleted = false', [normalizedDate]);
+        'FROM appointment as a left outer join washer w on a.washer_id = w.id left outer join users u on a.user_id = u.id ' +
+        'WHERE a.date = $1 AND a.deleted = false', [normalizedDate]);
     return createAppointmentObjsFromQuery(result);
 }
 
@@ -85,7 +85,7 @@ function createAppointmentObjsFromQuery(queryResult: QueryResult): IAppointment[
                 name: row.name,
                 room: row.room
             },
-            machine:  row.washer
+            machine: row.washer
         }
     });
 }
@@ -113,9 +113,11 @@ export async function findByDateSlotAndMachine(date: Date, timeSlot: number, mac
 }
 
 export async function deleteAppointment(appointment: Appointment) {
-    const normalizedDate = normalizeDate(appointment.date);
-    const queryResult = await client.query('UPDATE appointment SET deleted=true WHERE date = $3 AND id in (SELECT a.id FROM appointment as a left outer join washer w on a.washer_id = w.id WHERE slot_id = $2 AND w.name = $1 and a.deleted = false)',
-        [appointment.machine.name, appointment.timeSlot.id, normalizedDate]);
+    if (appointment.user === null) {
+        throw error(400, "User cannot be null");
+    }
+    await client.query('UPDATE appointment SET deleted=true WHERE date = $3 AND id in (SELECT a.id FROM appointment as a left outer join washer w on a.washer_id = w.id left outer join users u on a.user_id=u.id WHERE slot_id = $2 AND w.name = $1 AND u.name = $4 AND a.deleted = false)',
+        [appointment.machine.name, appointment.timeSlot.id, normalizeDate(appointment.date), appointment.user.name]);
     return;
 }
 
