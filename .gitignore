@@ -7,5 +7,5 @@ node_modules
 .env.*
 !.env.example
 .idea
-src/lib/server/db.json
-src/lib/server/public.pem
+src/lib/server/db/db.json
+src/lib/server/auth/public.pem

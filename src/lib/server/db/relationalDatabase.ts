@@ -1,9 +1,9 @@
 import type {ClientConfig, QueryResult} from 'pg';
 import {Client} from 'pg';
-import type {Appointment} from "../model/Appointment";
+import type {Appointment} from "../../model/Appointment";
 import {error} from "@sveltejs/kit";
-import type User from "../model/User";
-import type Machine from "../model/Machine";
+import type User from "../../model/User";
+import type Machine from "../../model/Machine";
 import fs from 'fs';
 import type {IAppointment} from "./database";
 
