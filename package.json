@@ -11,29 +11,29 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/kit": "next",
-		"@typescript-eslint/eslint-plugin": "^5.35.1",
-		"@typescript-eslint/parser": "^5.35.1",
-		"autoprefixer": "^10.4.13",
-		"eslint": "^8.16.0",
+		"@sveltejs/adapter-auto": "~2.0.0",
+		"@sveltejs/kit": "~1.11.0",
+		"@typescript-eslint/eslint-plugin": "^5.55.0",
+		"@typescript-eslint/parser": "^5.55.0",
+		"autoprefixer": "^10.4.14",
+		"eslint": "^8.36.0",
 		"eslint-plugin-svelte3": "^4.0.0",
-		"postcss": "^8.4.18",
-		"svelte": "^3.44.0",
-		"svelte-check": "^2.7.1",
-		"svelte-preprocess": "^4.10.7",
-		"tailwindcss": "^3.2.1",
-		"tslib": "^2.3.1",
-		"typescript": "^4.7.4",
-		"vite": "^3.0.4"
+		"postcss": "^8.4.21",
+		"svelte": "^3.56.0",
+		"svelte-check": "^3.1.4",
+		"svelte-preprocess": "^5.0.1",
+		"tailwindcss": "^3.2.7",
+		"tslib": "^2.5.0",
+		"typescript": "^4.9.5",
+		"vite": "^4.1.4"
 	},
 	"dependencies": {
-		"@types/pg": "^8.6.5",
-		"date-fns": "~2.29.2",
-		"dotenv": "^16.0.2",
+		"@types/pg": "^8.6.6",
+		"date-fns": "~2.29.3",
+		"dotenv": "^16.0.3",
 		"keycloak-js": "~18.0.1",
-		"mongoose": "^6.6.0",
-		"pg": "^8.8.0"
+		"mongoose": "^7.0.1",
+		"pg": "^8.10.0"
 	},
 	"type": "module"
 }
