@@ -16,6 +16,9 @@
 
 
     async function deleteReservation() {
+        if ($blockedBy === null || $userStore === null) {
+            return;
+        }
         if (!$blockedBy.equals($userStore)) {
             // User does not own appointment
             return;
