@@ -7,7 +7,7 @@ import type Machine from "../../model/Machine";
 import fs from 'fs';
 import type {IAppointment} from "./database";
 
-const config: ClientConfig = JSON.parse(fs.readFileSync('src/lib/server/db.json', 'utf8'));
+const config: ClientConfig = JSON.parse(fs.readFileSync('src/lib/server/db/db.json', 'utf8'));
 const client = new Client(config)
 await client.connect()
 

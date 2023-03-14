@@ -19,7 +19,7 @@ export function getAuthenticatedRoom(authToken: string): string {
     }
 }
 
-const publicKey = readFileSync(join('src', 'lib', 'server', 'public.pem'));
+const publicKey = readFileSync(join('src', 'lib', 'server', 'auth', 'public.pem'));
 
 /**
  * Verifies the signature of the given JWT token
