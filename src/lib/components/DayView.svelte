@@ -3,7 +3,7 @@
     import Timeslot from "./Timeslot.svelte";
     import TimeSlot from "../model/TimeSlot";
 
-    const timeSlots: TimeSlot[] = [...Array(12).keys()].map(i => new TimeSlot(i))
+    const timeSlots: TimeSlot[] = [...Array(12).keys()].map(i => new TimeSlot(i+1))
 </script>
 
 <table>
